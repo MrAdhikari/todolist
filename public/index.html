@@ -1,29 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manish's to-do list</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manish's Todo List</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>📝 Manish's Todo List</h1>
-      <p class="subtitle">Add tasks below and mark them done!</p>
-    </header>
 
-    <!-- Form to add new todos -->
-    <form id="todo-form" class="add-form">
-      <input type="text" id="todo-input" placeholder="What do you need to do?" required>
-      <button type="submit">Add</button>
-    </form>
+  <header>
+    <h1>📝 Manish's Todo List</h1>
+    <p class="subtitle">Add tasks, set a category, and stay on top of things.</p>
+    <span class="tag">persisted</span>
+  </header>
 
-    <!-- Where our todo items will appear -->
-    <ul id="todo-list"></ul>
+  <div class="layout">
+    <aside>
+      <h2>Filter</h2>
+      <div id="filter-list"></div>
+    </aside>
+
+    <main>
+      <form id="todo-form">
+        <input id="todo-input" type="text" placeholder="What do you need to do?" autocomplete="off" required />
+        <input id="cat-input"  type="text" placeholder="Category (e.g. work)" autocomplete="off" />
+        <button type="submit">+ Add</button>
+      </form>
+
+      <ul id="todo-list">
+        <li class="empty-state">No todos yet — add one above!</li>
+      </ul>
+    </main>
   </div>
 
-  <!-- Our JavaScript runs at the end so the DOM is ready -->
   <script src="app.js"></script>
 </body>
 </html>

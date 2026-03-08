@@ -1,230 +1,297 @@
-/**
- * STYLE.CSS - Styling the Page
- * 
- * CSS = Cascading Style Sheets
- * You'll learn: selectors, flexbox, colors, spacing, hover effects
- */
-
-/* Reset: Remove default browser margins */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
-
-:root {
-  --bg: #f2f2f7;
-  --surface: rgba(255, 255, 255, 0.72);
-  --surface-hover: rgba(255, 255, 255, 0.9);
-  --border: rgba(0, 0, 0, 0.08);
-  --text-primary: #1c1c1e;
-  --text-secondary: #6e6e73;
-  --accent: #007aff;
-  --accent-hover: #0051d4;
-  --destructive: #ff3b30;
-  --destructive-hover: #d70015;
-  --completed-text: #aeaeb2;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
-  --radius: 13px;
-  --radius-sm: 8px;
-}
-
-* {
+/* ── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
 }
 
+/* ── Design tokens ──────────────────────────────────────────── */
+:root {
+  --bg:      #0f0f13;
+  --surface: #18181f;
+  --border:  #2a2a35;
+  --accent:  #7c6aff;
+  --accent2: #ff6a6a;
+  --text:    #e8e8f0;
+  --muted:   #6b6b80;
+  --cat-bg:  #1e1e2e;
+  --radius:  10px;
+  --mono:    'DM Mono', monospace;
+  --sans:    'DM Sans', sans-serif;
+}
+
+/* ── Base ───────────────────────────────────────────────────── */
 body {
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-  min-height: 100vh;
   background: var(--bg);
-  color: var(--text-primary);
-  padding: 3rem 1.5rem;
-}
-
-.container {
-  max-width: 420px;
-  margin: 0 auto;
-}
-
-header {
-  text-align: left;
-  margin-bottom: 2rem;
-  padding: 0 0.25rem;
-}
-
-h1 {
-  font-size: 2.25rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
-  margin-bottom: 0.2rem;
-  line-height: 1.1;
-}
-
-.subtitle {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  font-weight: 400;
-  letter-spacing: 0;
-}
-
-/* Add form */
-.add-form {
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.25rem;
+  flex-direction: column;
 }
 
-.add-form input {
+/* ── Header ─────────────────────────────────────────────────── */
+header {
+  padding: 28px 40px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+header h1 {
+  font-family: var(--mono);
+  font-size: 1.35rem;
+  font-weight: 500;
+  letter-spacing: -0.4px;
+}
+
+header .subtitle {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+header .tag {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--accent);
+  background: rgba(124, 106, 255, 0.12);
+  border: 1px solid rgba(124, 106, 255, 0.28);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+/* ── Layout ─────────────────────────────────────────────────── */
+.layout {
+  display: flex;
   flex: 1;
-  padding: 0.75rem 1rem;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 0.95rem;
-  font-family: inherit;
-  background: var(--surface);
-  color: var(--text-primary);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.add-form input::placeholder {
-  color: var(--text-secondary);
+/* ── Sidebar ────────────────────────────────────────────────── */
+aside {
+  width: 190px;
+  border-right: 1px solid var(--border);
+  padding: 24px 14px;
+  flex-shrink: 0;
 }
 
-.add-form input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12), var(--shadow-sm);
+aside h2 {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  color: var(--muted);
+  margin-bottom: 12px;
 }
 
-.add-form button {
-  padding: 0.75rem 1.1rem;
-  background: var(--accent);
-  color: white;
+#filter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.filter-btn {
+  background: none;
   border: none;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  font-size: 0.95rem;
-  font-family: inherit;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.84rem;
+  text-align: left;
+  padding: 7px 10px;
+  border-radius: 6px;
   cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
-  letter-spacing: -0.01em;
+  transition: background 0.15s, color 0.15s;
 }
 
-.add-form button:hover {
-  background: var(--accent-hover);
-  box-shadow: var(--shadow-md);
+.filter-btn:hover {
+  background: var(--surface);
+  color: var(--text);
 }
 
-.add-form button:active {
-  transform: scale(0.97);
+.filter-btn.active {
+  background: rgba(124, 106, 255, 0.14);
+  color: var(--accent);
+  font-weight: 600;
 }
 
-/* Todo list */
+/* ── Main content ───────────────────────────────────────────── */
+main {
+  flex: 1;
+  padding: 28px 36px;
+  max-width: 820px;
+}
+
+/* ── Add todo form ──────────────────────────────────────────── */
+#todo-form {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  margin-bottom: 26px;
+}
+
+#todo-form input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#todo-form input:focus {
+  border-color: var(--accent);
+}
+
+#todo-form input::placeholder {
+  color: var(--muted);
+}
+
+#cat-input {
+  width: 150px;
+}
+
+#todo-form button {
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  padding: 10px 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+#todo-form button:hover {
+  opacity: 0.82;
+}
+
+/* ── Todo list ──────────────────────────────────────────────── */
 #todo-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
+.empty-state {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.88rem;
+  padding: 48px 0;
+  font-family: var(--mono);
+}
+
+/* ── Todo item ──────────────────────────────────────────────── */
 .todo-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 13px 16px;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.875rem 1rem;
-  background: var(--surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: var(--radius);
-  border: 1.5px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  justify-content: space-between;
+  gap: 12px;
+  transition: border-color 0.2s, opacity 0.25s;
+  animation: slideIn 0.18s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .todo-item:hover {
-  background: var(--surface-hover);
-  box-shadow: var(--shadow-md);
+  border-color: #3a3a4a;
 }
 
-.todo-item:active {
-  transform: scale(0.99);
+.todo-item.completed {
+  opacity: 0.45;
 }
 
 .todo-item.completed .todo-text {
   text-decoration: line-through;
-  color: var(--completed-text);
 }
 
-/* Custom checkbox */
-.todo-item input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 2px solid #c7c7cc;
+.todo-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.todo-main input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
   cursor: pointer;
   flex-shrink: 0;
-  transition: all 0.2s ease;
-  position: relative;
-  background: white;
-}
-
-.todo-item input[type="checkbox"]:checked {
-  background: var(--accent);
-  border-color: var(--accent);
-}
-
-.todo-item input[type="checkbox"]:checked::after {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: 6px;
-  width: 6px;
-  height: 9px;
-  border: 2px solid white;
-  border-top: none;
-  border-left: none;
-  transform: rotate(40deg);
-}
-
-.todo-item input[type="checkbox"]:hover:not(:checked) {
-  border-color: var(--accent);
 }
 
 .todo-text {
-  flex: 1;
-  font-size: 0.95rem;
-  font-weight: 400;
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
-  transition: color 0.2s ease;
+  font-size: 0.91rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.todo-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.todo-category {
+  font-family: var(--mono);
+  font-size: 0.67rem;
+  background: var(--cat-bg);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: lowercase;
+}
+
+.todo-date {
+  font-family: var(--mono);
+  font-size: 0.67rem;
+  color: var(--muted);
+  white-space: nowrap;
 }
 
 .delete-btn {
-  padding: 0.3rem 0.6rem;
-  background: transparent;
-  color: var(--destructive);
+  background: none;
   border: none;
-  border-radius: 6px;
+  color: var(--muted);
+  font-size: 0.78rem;
   cursor: pointer;
-  font-size: 0.8rem;
-  font-family: inherit;
-  font-weight: 500;
-  opacity: 0;
-  transition: opacity 0.15s ease, background 0.15s ease;
-}
-
-.todo-item:hover .delete-btn {
-  opacity: 1;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+  line-height: 1;
 }
 
 .delete-btn:hover {
-  background: rgba(255, 59, 48, 0.1);
-  color: var(--destructive-hover);
+  color: var(--accent2);
+  background: rgba(255, 106, 106, 0.1);
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 620px) {
+  aside                { display: none; }
+  header               { padding: 20px 18px 16px; }
+  main                 { padding: 20px 16px; }
+  #todo-form           { grid-template-columns: 1fr 1fr; }
+  #todo-input          { grid-column: 1 / -1; }
+  #cat-input           { width: 100%; }
+  .todo-meta           { flex-direction: column; align-items: flex-end; gap: 4px; }
 }
