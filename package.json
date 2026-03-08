@@ -6,10 +6,17 @@
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": ["todo", "learning", "web-dev"],
+  "keywords": [
+    "todo",
+    "learning",
+    "web-dev"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@ljharb/tsconfig": "^0.3.2"
   }
 }
