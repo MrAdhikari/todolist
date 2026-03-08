@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Todo List</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📝 My Todo List</h1>
+      <p class="subtitle">Add tasks below and mark them done!</p>
+    </header>
+
+    <!-- Form to add new todos -->
+    <form id="todo-form" class="add-form">
+      <input type="text" id="todo-input" placeholder="What do you need to do?" required>
+      <button type="submit">Add</button>
+    </form>
+
+    <!-- Where our todo items will appear -->
+    <ul id="todo-list"></ul>
+  </div>
+
+  <!-- Our JavaScript runs at the end so the DOM is ready -->
+  <script src="app.js"></script>
+</body>
+</html>

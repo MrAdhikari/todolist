@@ -1,0 +1,129 @@
+/**
+ * STYLE.CSS - Styling the Page
+ * 
+ * CSS = Cascading Style Sheets
+ * You'll learn: selectors, flexbox, colors, spacing, hover effects
+ */
+
+/* Reset: Remove default browser margins */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body: Full viewport, centered content */
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #eee;
+  padding: 2rem;
+}
+
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+/* Add form - Flexbox for horizontal layout */
+.add-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.add-form input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid #334155;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #1e293b;
+  color: #f1f5f9;
+}
+
+.add-form input:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+.add-form button {
+  padding: 0.75rem 1.25rem;
+  background: #38bdf8;
+  color: #0f172a;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-form button:hover {
+  background: #7dd3fc;
+}
+
+/* Todo list */
+#todo-list {
+  list-style: none;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: #1e293b;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  transition: opacity 0.2s;
+}
+
+.todo-item:hover {
+  background: #334155;
+}
+
+.todo-item.completed .todo-text {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.todo-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #38bdf8;
+}
+
+.todo-text {
+  flex: 1;
+  font-size: 1rem;
+}
+
+.delete-btn {
+  padding: 0.35rem 0.6rem;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.delete-btn:hover {
+  background: #ef4444;
+}
