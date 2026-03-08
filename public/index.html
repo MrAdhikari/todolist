@@ -3,38 +3,116 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Manish's Todo List</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <title>Todo Manager</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
-  <header>
-    <h1>📝 Manish's Todo List</h1>
-    <p class="subtitle">Add tasks, set a category, and stay on top of things.</p>
-    <span class="tag">persisted</span>
-  </header>
+  <div class="app">
 
-  <div class="layout">
-    <aside>
-      <h2>Filter</h2>
-      <div id="filter-list"></div>
-    </aside>
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-left">
+        <h1>📝 Todo Manager</h1>
+        <p>Stay organized. Clear your mind.</p>
+      </div>
 
-    <main>
-      <form id="todo-form">
-        <input id="todo-input" type="text" placeholder="What do you need to do?" autocomplete="off" required />
-        <input id="cat-input"  type="text" placeholder="Category (e.g. work)" autocomplete="off" />
-        <button type="submit">+ Add</button>
-      </form>
+      <div class="header-right">
+        <span class="tag">Saved Locally</span>
+      </div>
+    </header>
 
-      <ul id="todo-list">
-        <li class="empty-state">No todos yet — add one above!</li>
-      </ul>
-    </main>
+
+    <!-- MAIN CONTENT -->
+    <div class="layout">
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+
+        <h2>Categories</h2>
+
+        <div id="filter-list" class="filter-list">
+          <!-- Filters inserted via JS -->
+        </div>
+
+      </aside>
+
+
+
+      <!-- MAIN PANEL -->
+      <main class="main">
+
+        <!-- ADD TODO CARD -->
+        <section class="card add-card">
+
+          <h2>Add Task</h2>
+
+          <form id="todo-form">
+
+            <div class="input-group">
+              <input 
+                id="todo-input"
+                type="text"
+                placeholder="What needs to be done?"
+                autocomplete="off"
+                required
+              />
+            </div>
+
+            <div class="input-row">
+
+              <input 
+                id="cat-input"
+                type="text"
+                placeholder="Category (work, study, gym...)"
+                autocomplete="off"
+              />
+
+              <button type="submit">
+                + Add Task
+              </button>
+
+            </div>
+
+          </form>
+
+        </section>
+
+
+
+        <!-- TODO LIST -->
+        <section class="card todo-card">
+
+          <div class="list-header">
+            <h2>Your Tasks</h2>
+          </div>
+
+          <ul id="todo-list">
+
+            <li class="empty-state">
+              <div class="empty-icon">📭</div>
+              <p>No tasks yet</p>
+              <span>Add one above to get started</span>
+            </li>
+
+          </ul>
+
+        </section>
+
+      </main>
+
+    </div>
+
   </div>
 
   <script src="app.js"></script>
+
 </body>
 </html>

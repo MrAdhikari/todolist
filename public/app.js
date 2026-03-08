@@ -1,11 +1,11 @@
 /**
- * APP.JS - Enhanced Frontend
- *
- * New Features:
- * - Display createdAt date/time on each todo
- * - Category badge on each todo
- * - Category input when adding a todo
- * - Sidebar filter: click a category to show only those todos
+ * APP.JS – Improved Todo Frontend
+ * Improvements:
+ * - Proper empty state handling
+ * - Safer DOM rendering
+ * - Optimistic UI updates
+ * - Better filter refresh
+ * - Keyboard UX improvements
  */
 
 const todoForm   = document.getElementById('todo-form');
@@ -14,162 +14,287 @@ const catInput   = document.getElementById('cat-input');
 const todoList   = document.getElementById('todo-list');
 const filterList = document.getElementById('filter-list');
 
-let activeFilter = 'all';   // currently selected category filter
+let activeFilter = 'all';
 
-// ── Boot ───────────────────────────────────────────────────────────────────────
+/* ───────── Boot ───────── */
 
-document.addEventListener('DOMContentLoaded', () => {
-  loadTodos();
-  loadCategories();
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadTodos();
+  await loadCategories();
+  todoInput.focus();
 });
 
-// ── Form submit ────────────────────────────────────────────────────────────────
+
+/* ───────── Add Todo ───────── */
 
 todoForm.addEventListener('submit', async (e) => {
+
   e.preventDefault();
-  const text     = todoInput.value.trim();
+
+  const text = todoInput.value.trim();
   const category = catInput.value.trim() || 'general';
+
   if (!text) return;
 
   try {
-    const res  = await fetch('/api/todos', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ text, category })
+
+    const res = await fetch('/api/todos', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ text, category })
     });
+
     const newTodo = await res.json();
+
     addTodoToDOM(newTodo);
+
     todoInput.value = '';
-    catInput.value  = '';
-    await refreshFilters();                 // update sidebar in case new category
-  } catch (err) {
-    console.error('Failed to add todo:', err);
+    catInput.value = '';
+
+    todoInput.focus();
+
+    await refreshFilters();
+
+  } catch(err) {
+    console.error('Add failed', err);
   }
+
 });
 
-// ── Load todos (with optional category filter) ─────────────────────────────────
+
+/* ───────── Load Todos ───────── */
 
 async function loadTodos(category = 'all') {
+
   try {
+
     const url = category === 'all'
       ? '/api/todos'
       : `/api/todos?category=${encodeURIComponent(category)}`;
-    const res   = await fetch(url);
+
+    const res = await fetch(url);
     const todos = await res.json();
+
     todoList.innerHTML = '';
-    todos.forEach(t => addTodoToDOM(t));
-  } catch (err) {
-    console.error('Failed to load todos:', err);
+
+    if (todos.length === 0) {
+      renderEmptyState();
+      return;
+    }
+
+    todos.forEach(addTodoToDOM);
+
+  } catch(err) {
+    console.error('Load failed', err);
   }
+
 }
 
-// ── Load category filters ──────────────────────────────────────────────────────
 
-async function loadCategories() {
+/* ───────── Categories ───────── */
+
+async function loadCategories(){
+
   try {
-    const res  = await fetch('/api/categories');
+
+    const res = await fetch('/api/categories');
     const cats = await res.json();
+
     renderFilters(cats);
-  } catch (err) {
-    console.error('Failed to load categories:', err);
+
+  } catch(err) {
+    console.error('Category load failed', err);
   }
+
 }
 
-async function refreshFilters() {
+async function refreshFilters(){
   await loadCategories();
 }
 
-function renderFilters(cats) {
+
+/* ───────── Filter UI ───────── */
+
+function renderFilters(cats){
+
   filterList.innerHTML = '';
 
-  const allBtn = makeFilterBtn('All', 'all');
+  const allBtn = makeFilterBtn('All','all');
   filterList.appendChild(allBtn);
 
-  cats.forEach(cat => {
-    filterList.appendChild(makeFilterBtn(capitalize(cat), cat));
+  cats.forEach(cat=>{
+    filterList.appendChild(
+      makeFilterBtn(capitalize(cat),cat)
+    );
   });
+
 }
 
-function makeFilterBtn(label, value) {
+function makeFilterBtn(label,value){
+
   const btn = document.createElement('button');
-  btn.className = 'filter-btn' + (activeFilter === value ? ' active' : '');
+
+  btn.className = 'filter-btn';
   btn.textContent = label;
-  btn.addEventListener('click', () => {
-    activeFilter = value;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+
+  if(activeFilter === value){
     btn.classList.add('active');
-    loadTodos(value);
-  });
+  }
+
+  btn.onclick = async ()=>{
+
+    activeFilter = value;
+
+    document.querySelectorAll('.filter-btn')
+      .forEach(b=>b.classList.remove('active'));
+
+    btn.classList.add('active');
+
+    await loadTodos(value);
+
+  };
+
   return btn;
+
 }
 
-// ── Render a single todo ───────────────────────────────────────────────────────
 
-function addTodoToDOM(todo) {
+/* ───────── Render Todo ───────── */
+
+function addTodoToDOM(todo){
+
   const li = document.createElement('li');
-  li.className = 'todo-item' + (todo.completed ? ' completed' : '');
+  li.className = 'todo-item';
+  if(todo.completed) li.classList.add('completed');
+
   li.dataset.id = todo.id;
 
-  const formattedDate = formatDate(todo.createdAt);
+  const main = document.createElement('div');
+  main.className = 'todo-main';
 
-  li.innerHTML = `
-    <div class="todo-main">
-      <input type="checkbox" ${todo.completed ? 'checked' : ''}>
-      <span class="todo-text">${escapeHtml(todo.text)}</span>
-    </div>
-    <div class="todo-meta">
-      <span class="todo-category">${escapeHtml(todo.category || 'general')}</span>
-      <span class="todo-date">${formattedDate}</span>
-      <button class="delete-btn" title="Delete">✕</button>
-    </div>
-  `;
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.checked = todo.completed;
 
-  // Toggle completed
-  li.querySelector('input[type="checkbox"]').addEventListener('change', async () => {
+  const text = document.createElement('span');
+  text.className = 'todo-text';
+  text.textContent = todo.text;
+
+  main.append(checkbox,text);
+
+  const meta = document.createElement('div');
+  meta.className = 'todo-meta';
+
+  const category = document.createElement('span');
+  category.className = 'todo-category';
+  category.textContent = todo.category || 'general';
+
+  const date = document.createElement('span');
+  date.className = 'todo-date';
+  date.textContent = formatDate(todo.createdAt);
+
+  const del = document.createElement('button');
+  del.className = 'delete-btn';
+  del.textContent = '✕';
+
+  meta.append(category,date,del);
+
+  li.append(main,meta);
+
+  /* Toggle completed */
+
+  checkbox.addEventListener('change', async ()=>{
+
+    const newState = !todo.completed;
+
+    li.classList.toggle('completed', newState);
+
     try {
-      await fetch(`/api/todos/${todo.id}`, {
-        method:  'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ completed: !todo.completed })
+
+      await fetch(`/api/todos/${todo.id}`,{
+        method:'PUT',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({completed:newState})
       });
-      todo.completed = !todo.completed;
-      li.classList.toggle('completed', todo.completed);
-    } catch (err) {
-      console.error('Failed to update todo:', err);
+
+      todo.completed = newState;
+
+    } catch(err) {
+
+      console.error('Update failed',err);
+
+      checkbox.checked = todo.completed;
+      li.classList.toggle('completed',todo.completed);
+
     }
+
   });
 
-  // Delete
-  li.querySelector('.delete-btn').addEventListener('click', async () => {
+  /* Delete */
+
+  del.addEventListener('click', async ()=>{
+
+    li.style.opacity = 0.4;
+
     try {
-      await fetch(`/api/todos/${todo.id}`, { method: 'DELETE' });
+
+      await fetch(`/api/todos/${todo.id}`,{
+        method:'DELETE'
+      });
+
       li.remove();
+
+      if(!todoList.children.length){
+        renderEmptyState();
+      }
+
       await refreshFilters();
-    } catch (err) {
-      console.error('Failed to delete todo:', err);
+
+    } catch(err){
+
+      console.error('Delete failed',err);
+      li.style.opacity = 1;
+
     }
+
   });
 
   todoList.appendChild(li);
+
 }
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
 
-function formatDate(iso) {
-  if (!iso) return '';
+/* ───────── Empty State ───────── */
+
+function renderEmptyState(){
+
+  const empty = document.createElement('li');
+
+  empty.className = 'empty-state';
+  empty.textContent = 'No tasks yet — add one above.';
+
+  todoList.appendChild(empty);
+
+}
+
+
+/* ───────── Helpers ───────── */
+
+function formatDate(iso){
+
+  if(!iso) return '';
+
   const d = new Date(iso);
-  return d.toLocaleString(undefined, {
-    month: 'short', day: 'numeric', year: 'numeric',
-    hour: '2-digit', minute: '2-digit'
+
+  return d.toLocaleString(undefined,{
+    month:'short',
+    day:'numeric',
+    hour:'2-digit',
+    minute:'2-digit'
   });
+
 }
 
-function capitalize(str) {
+function capitalize(str){
   return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
 }
