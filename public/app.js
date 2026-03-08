@@ -8,18 +8,20 @@
  * - Keyboard UX improvements
  */
 
-const todoForm   = document.getElementById('todo-form');
-const todoInput  = document.getElementById('todo-input');
-const catInput   = document.getElementById('cat-input');
-const todoList   = document.getElementById('todo-list');
-const filterList = document.getElementById('filter-list');
+const todoForm     = document.getElementById('todo-form');
+const todoInput    = document.getElementById('todo-input');
+const catInput     = document.getElementById('cat-input');
+const todoList     = document.getElementById('todo-list');
+const filterList   = document.getElementById('filter-list');
+const statsText    = document.getElementById('stats-text');
+const progressFill = document.getElementById('progress-fill');
 
-let activeFilter = 'all';
+let activeFilter = localStorage.getItem('todoActiveFilter') || 'all';
 
 /* ───────── Boot ───────── */
 
 document.addEventListener('DOMContentLoaded', async () => {
-  await loadTodos();
+  await loadTodos(activeFilter);
   await loadCategories();
   todoInput.focus();
 });
@@ -79,10 +81,12 @@ async function loadTodos(category = 'all') {
 
     if (todos.length === 0) {
       renderEmptyState();
+      recalcStatsFromDOM();
       return;
     }
 
     todos.forEach(addTodoToDOM);
+    recalcStatsFromDOM();
 
   } catch(err) {
     console.error('Load failed', err);
@@ -144,6 +148,7 @@ function makeFilterBtn(label,value){
   btn.onclick = async ()=>{
 
     activeFilter = value;
+    localStorage.setItem('todoActiveFilter', activeFilter);
 
     document.querySelectorAll('.filter-btn')
       .forEach(b=>b.classList.remove('active'));
@@ -218,6 +223,7 @@ function addTodoToDOM(todo){
       });
 
       todo.completed = newState;
+      recalcStatsFromDOM();
 
     } catch(err) {
 
@@ -250,6 +256,8 @@ function addTodoToDOM(todo){
 
       await refreshFilters();
 
+      recalcStatsFromDOM();
+
     } catch(err){
 
       console.error('Delete failed',err);
@@ -259,7 +267,14 @@ function addTodoToDOM(todo){
 
   });
 
+  // Inline edit on double-click
+  text.addEventListener('dblclick', () => {
+    startInlineEdit(todo, li, text);
+  });
+
   todoList.appendChild(li);
+
+  recalcStatsFromDOM();
 
 }
 
@@ -279,6 +294,95 @@ function renderEmptyState(){
 
 
 /* ───────── Helpers ───────── */
+
+function recalcStatsFromDOM(){
+
+  if (!statsText || !progressFill) return;
+
+  const items = todoList.querySelectorAll('.todo-item');
+  const total = items.length;
+  let completed = 0;
+
+  items.forEach(li => {
+    if (li.classList.contains('completed')) completed++;
+  });
+
+  const remaining = total - completed;
+
+  if (total === 0) {
+    statsText.textContent = 'No tasks in this view';
+    progressFill.style.width = '0%';
+    progressFill.style.opacity = '0.25';
+    return;
+  }
+
+  statsText.textContent = `${total} tasks • ${completed} done • ${remaining} left`;
+
+  const pct = Math.round((completed / total) * 100);
+  progressFill.style.width = `${pct}%`;
+  progressFill.style.opacity = '1';
+}
+
+function startInlineEdit(todo, li, textSpan){
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'edit-input';
+  input.value = todo.text;
+
+  textSpan.replaceWith(input);
+  input.focus();
+  input.select();
+
+  let finished = false;
+
+  const cleanup = () => {
+    if (finished) return;
+    finished = true;
+    input.removeEventListener('blur', onBlur);
+    input.removeEventListener('keydown', onKeyDown);
+  };
+
+  const commitChange = async (shouldSave) => {
+    cleanup();
+
+    const newText = input.value.trim();
+
+    input.replaceWith(textSpan);
+
+    if (!shouldSave || !newText || newText === todo.text) {
+      textSpan.textContent = todo.text;
+      return;
+    }
+
+    textSpan.textContent = newText;
+
+    try {
+      await fetch(`/api/todos/${todo.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: newText })
+      });
+      todo.text = newText;
+    } catch (err) {
+      console.error('Rename failed', err);
+      textSpan.textContent = todo.text;
+    }
+  };
+
+  const onBlur = () => commitChange(true);
+
+  const onKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      commitChange(true);
+    } else if (e.key === 'Escape') {
+      commitChange(false);
+    }
+  };
+
+  input.addEventListener('blur', onBlur);
+  input.addEventListener('keydown', onKeyDown);
+}
 
 function formatDate(iso){
 

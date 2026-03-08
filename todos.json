@@ -1,0 +1,26 @@
+{
+  "nextId": 9,
+  "todos": [
+    {
+      "id": 4,
+      "text": "what is my name?",
+      "completed": false,
+      "category": "general",
+      "createdAt": "2026-03-08T09:01:03.438Z"
+    },
+    {
+      "id": 7,
+      "text": "cig",
+      "completed": true,
+      "category": "shopping",
+      "createdAt": "2026-03-08T09:24:10.715Z"
+    },
+    {
+      "id": 8,
+      "text": "quit and restart the web",
+      "completed": true,
+      "category": "work",
+      "createdAt": "2026-03-08T09:24:56.282Z"
+    }
+  ]
+}
